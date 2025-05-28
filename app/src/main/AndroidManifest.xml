@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_dictionary_logo"
+        android:icon="@drawable/logo_mobile"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_dictionary_logo"
+        android:roundIcon="@drawable/logo_mobile"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project_HK2_24_25_LaptrinhMobile"
         tools:targetApi="31">

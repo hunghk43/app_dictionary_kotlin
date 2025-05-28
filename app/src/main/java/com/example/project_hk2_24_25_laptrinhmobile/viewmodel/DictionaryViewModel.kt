@@ -1,6 +1,7 @@
 // viewmodel/DictionaryViewModel.kt
 package com.example.project_hk2_24_25_laptrinhmobile.viewmodel
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition // Import model mới
@@ -119,38 +120,38 @@ class DictionaryViewModel @Inject constructor(
 
         if (networkStatus.value != NetworkStatus.Available) {
             _searchResult.value = ApiResult.Error(Constants.ERROR_MSG_NETWORK)
+            _selectedRichWord.value = null // Đặt null khi lỗi mạng
             viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar(Constants.ERROR_MSG_NETWORK)) }
             return
         }
 
-        if (word != null) { _searchQuery.value = queryToSearch }
+        if (word != null) _searchQuery.value = queryToSearch
         _searchSuggestions.value = emptyList()
 
         searchJob = viewModelScope.launch {
-            // Gọi hàm mới từ repository
             repository.getWordDetailsWithTranslation(queryToSearch).collect { result ->
-                _searchResult.value = result // result là ApiResult<RichWordDefinition>
-                if (result is ApiResult.Success) {
-                    // Nếu SearchScreen chỉ hiển thị 1 kết quả chính, bạn có thể set _selectedRichWord ở đây luôn
-                    // Hoặc để SearchScreen tự lấy result.data và truyền cho DefinitionScreen
-                    // Hiện tại, SearchScreen sẽ dùng _searchResult để hiển thị,
-                    // và khi click vào item, sẽ gọi selectRichWordDefinition.
-                    // _selectedRichWord.value = result.data // Tùy chọn: có thể không cần thiết ở đây
-                    loadSearchHistory()
-                } else if (result is ApiResult.Error) {
-                    // _selectedRichWord.value = null // searchResult đã là Error rồi
-                    viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar(result.message)) }
+                _searchResult.value = result
+                when (result) {
+                    is ApiResult.Success -> {
+                        _selectedRichWord.value = result.data
+                        loadSearchHistory()
+                    }
+                    is ApiResult.Error -> {
+                        _selectedRichWord.value = null // Đặt null khi lỗi
+                        viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar(result.message)) }
+                    }
+                    is ApiResult.Loading -> Unit
                 }
             }
         }
     }
-
     /**
      * Chọn một RichWordDefinition (ví dụ: khi người dùng click vào item trong SearchScreen
      * để xem chi tiết trong DefinitionScreen).
      */
     fun selectRichWordDefinition(richDefinition: RichWordDefinition?) {
-        _selectedRichWord.value = richDefinition
+        _selectedRichWord.value = richDefinition // Dòng này phải được thực thi
+        Log.d("ViewModelDebug", "Selected rich word: ${richDefinition?.englishDetails?.word}") // Thêm log
     }
 
     /**
