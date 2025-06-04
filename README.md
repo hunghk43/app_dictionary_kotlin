@@ -58,7 +58,7 @@ Dự án được tổ chức theo kiến trúc MVVM và chia thành các packag
     *   `theme`: Định nghĩa màu sắc, typography, và shapes cho ứng dụng 
 *   **`utils`**: Chứa các lớp và hàm tiện ích
 *   **`viewmodel`**: Chứa các `ViewModel`  xử lý logic nghiệp vụ và quản lý trạng thái cho UI.
-*   **Thư mục gốc package**: 
+
 
 ## Hướng dẫn cài đặt và chạy dự án
 
@@ -87,8 +87,8 @@ Nếu bạn muốn đóng góp, vui lòng fork repository và tạo một pull r
 
 ## Tác giả
 
-*   **[Hoàng Kim Hùng]**
-*   **[Phạm Minh Tuấn]** 
+*   **Hoàng Kim Hùng**
+*   **Phạm Minh Tuấn** 
 
 
 
