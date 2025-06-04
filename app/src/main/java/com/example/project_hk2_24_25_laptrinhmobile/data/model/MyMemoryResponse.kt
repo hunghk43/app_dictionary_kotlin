@@ -1,4 +1,4 @@
-// data/model/MyMemoryResponse.kt
+
 package com.example.project_hk2_24_25_laptrinhmobile.data.model
 
 import com.google.gson.annotations.SerializedName
@@ -8,14 +8,14 @@ data class MyMemoryResponse(
     val responseData: ResponseData?,
 
     @SerializedName("responseDetails")
-    val responseDetails: String?, // Thêm trường này nếu API có trả về
+    val responseDetails: String?, // API trả về
 
     @SerializedName("responseStatus")
     val responseStatus: Int?,
 
     @SerializedName("matches")
     val matches: List<MatchItem>?
-    // Thêm các trường khác ở cấp cao nhất của JSON response nếu có
+
 )
 
 data class ResponseData(

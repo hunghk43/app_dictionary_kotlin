@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-// String Extensions
+
 fun String?.isNotNullOrBlank(): Boolean = !this.isNullOrBlank()
 
 fun String.capitalizeFirstLetter(): String {
@@ -41,7 +41,7 @@ fun String.capitalizeFirstLetter(): String {
     }
 }
 
-// Context Extensions
+
 fun Context.isNetworkAvailable(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -66,7 +66,7 @@ fun Context.hideKeyboard(view: View) {
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-// Composable Extensions (Keyboard and Focus)
+
 @Composable
 fun hideKeyboardOnDispose(softwareKeyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current) {
     DisposableEffect(Unit) {
@@ -81,7 +81,6 @@ fun FocusManager.clearFocusAndHideKeyboard(softwareKeyboardController: SoftwareK
     softwareKeyboardController?.hide()
 }
 
-// Flow Extensions (Ví dụ: để log hoặc hiển thị loading/error)
 fun <T> Flow<T>.logFlow(tag: String = "FlowLog", messagePrefix: String = ""): Flow<T> = this
     .onStart { Log.d(tag, "$messagePrefix Started") }
     .onCompletion { cause ->
@@ -90,16 +89,16 @@ fun <T> Flow<T>.logFlow(tag: String = "FlowLog", messagePrefix: String = ""): Fl
     }
     .catch { throwable -> Log.e(tag, "$messagePrefix Exception: $throwable", throwable) }
 
-// Date/Time Extensions (Nếu cần)
+
 fun Long.toFormattedDateString(pattern: String = "dd/MM/yyyy HH:mm"): String {
     val date = Date(this)
     val format = SimpleDateFormat(pattern, Locale.getDefault())
     return format.format(date)
 }
 
-// Modifier Extensions (Ví dụ: để tránh double click)
+
 fun Modifier.debouncedClickable(
-    debounceInterval: Long = 500L, // Thời gian debounce (ms)
+    debounceInterval: Long = 500L,
     onClick: () -> Unit
 ): Modifier = composed {
     var lastClickTime by remember { mutableStateOf(0L) }
@@ -112,7 +111,7 @@ fun Modifier.debouncedClickable(
     }
 }
 
-// CoroutineScope Extensions (Ví dụ: launch với delay)
+
 fun CoroutineScope.launchWithDelay(delayMillis: Long, block: suspend CoroutineScope.() -> Unit) {
     this.launch {
         delay(delayMillis)

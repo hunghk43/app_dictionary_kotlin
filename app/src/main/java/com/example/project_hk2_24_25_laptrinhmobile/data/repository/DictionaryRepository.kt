@@ -1,24 +1,21 @@
-// data/repository/DictionaryRepository.kt
+
 package com.example.project_hk2_24_25_laptrinhmobile.data.repository
 
-// Import các model cần thiết
 import com.example.project_hk2_24_25_laptrinhmobile.data.model.WordDefinition // Model chi tiết tiếng Anh
 import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition // Model kết hợp mới
-// MyMemoryResponse không cần import ở đây nếu bạn xử lý response của nó hoàn toàn trong service hoặc safeApiCall
 
-// Import các service và tiện ích remote
 import com.example.project_hk2_24_25_laptrinhmobile.data.remote.ApiResult
 import com.example.project_hk2_24_25_laptrinhmobile.data.remote.EnglishDictionaryApiService
-import com.example.project_hk2_24_25_laptrinhmobile.data.remote.RetrofitClient // Cho getErrorMessage
+import com.example.project_hk2_24_25_laptrinhmobile.data.remote.RetrofitClient
 import com.example.project_hk2_24_25_laptrinhmobile.data.remote.TranslationApiService
-import com.example.project_hk2_24_25_laptrinhmobile.data.remote.safeApiCall // Nếu bạn dùng nó
+import com.example.project_hk2_24_25_laptrinhmobile.data.remote.safeApiCall
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException // Để bắt lỗi HTTP từ Retrofit
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,9 +24,9 @@ class DictionaryRepository @Inject constructor(
     private val englishApiService: EnglishDictionaryApiService, // Inject service tiếng Anh
     private val translationApiService: TranslationApiService  // Inject service dịch
 ) {
-    // Cache cho RichWordDefinition (chứa cả chi tiết Anh và dịch Việt)
+
     private val richWordCache = mutableMapOf<String, RichWordDefinition>()
-    // Lịch sử tìm kiếm vẫn lưu từ tiếng Anh
+
     private val searchHistory = mutableListOf<String>()
 
     /**
@@ -93,7 +90,7 @@ class DictionaryRepository @Inject constructor(
                         ?.take(2) // Ví dụ lấy thêm 2 gợi ý
                 } else {
                     // Log lỗi dịch nhưng không làm crash flow chính, người dùng vẫn nhận được chi tiết tiếng Anh
-                    // Bạn có thể emit một thông báo phụ hoặc để vietnameseMainTranslation là null
+
                     System.err.println("Lỗi dịch MyMemory: ${if (!translationApiResponse.isSuccessful) HttpException(translationApiResponse).message else "Response body null"}")
                 }
             } catch (translationException: Exception) {
@@ -151,7 +148,6 @@ class DictionaryRepository @Inject constructor(
         }
     }
 
-    // --- Các hàm quản lý lịch sử và cache ---
     private fun addToSearchHistory(word: String) {
         val cleanWord = word.trim().lowercase()
         searchHistory.remove(cleanWord) // Xóa nếu đã tồn tại để đưa lên đầu
@@ -185,7 +181,7 @@ class DictionaryRepository @Inject constructor(
         }
     }
 
-    fun getSearchSuggestions(query: String): List<String> { // Giữ nguyên
+    fun getSearchSuggestions(query: String): List<String> {
         return if (query.isBlank()) {
             searchHistory.take(5)
         } else {
@@ -197,7 +193,7 @@ class DictionaryRepository @Inject constructor(
 }
 
 // Các data class/sealed class phụ trợ (ValidationResult, RepositoryStats nếu có) có thể giữ nguyên
-// ValidationResult đã được bạn định nghĩa ở file trước
+// ValidationResult đã được  định nghĩa ở file trước
 sealed class ValidationResult { // Đảm bảo nó tồn tại
     object Valid : ValidationResult()
     data class Error(val message: String) : ValidationResult()

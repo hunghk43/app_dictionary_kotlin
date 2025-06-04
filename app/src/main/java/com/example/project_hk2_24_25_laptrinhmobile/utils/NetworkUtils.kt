@@ -64,7 +64,7 @@ class NetworkConnectivityObserver(private val context: Context) {
                 }
             }
 
-            // Kiểm tra trạng thái ban đầu
+
             if (context.isNetworkAvailable()) {
                 trySend(NetworkStatus.Available)
             } else {
@@ -83,19 +83,12 @@ class NetworkConnectivityObserver(private val context: Context) {
             awaitClose {
                 connectivityManager.unregisterNetworkCallback(networkCallback)
             }
-        }.distinctUntilChanged() // Chỉ emit khi trạng thái thay đổi
+        }.distinctUntilChanged()
     }
 }
 
-// Bạn có thể inject NetworkConnectivityObserver vào ViewModel hoặc sử dụng trực tiếp trong Composable.
-// Ví dụ sử dụng trong Composable:
-// @Composable
-// fun NetworkStatusIndicator(observer: NetworkConnectivityObserver) {
-//     val status by observer.observe().collectAsState(initial = NetworkStatus.Unavailable)
-//     // Hiển thị UI dựa trên status
-// }
 
-// Một cách khác để kiểm tra internet connectivity (ping tới server) - Nâng cao hơn
+
 object InternetAvailability {
     // Kiểm tra xem có thể thực sự kết nối tới internet không (không chỉ là network available)
     // Bằng cách thử kết nối tới một server DNS của Google.
@@ -113,7 +106,7 @@ object InternetAvailability {
         }
     }
 
-    // LiveData version (nếu bạn vẫn dùng LiveData ở đâu đó)
+    // LiveData version
     fun getLiveStatus(context: Context): LiveData<Boolean> {
         val liveData = MutableLiveData<Boolean>()
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -137,8 +130,7 @@ object InternetAvailability {
     }
 }
 
-// Tiện ích để chuyển đổi NetworkConnectivityObserver.observe() thành StateFlow
-// (Hữu ích nếu bạn muốn inject vào ViewModel và chia sẻ state)
+
 @Suppress("unused")
 fun NetworkConnectivityObserver.observeAsStateFlow(
     scope: CoroutineScope,
@@ -146,7 +138,7 @@ fun NetworkConnectivityObserver.observeAsStateFlow(
 ): StateFlow<NetworkStatus> {
     return this.observe().stateIn(
         scope = scope,
-        started = SharingStarted.WhileSubscribed(5000), // Bắt đầu observe khi có subscriber, dừng sau 5s không có
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = initialValue
     )
 }

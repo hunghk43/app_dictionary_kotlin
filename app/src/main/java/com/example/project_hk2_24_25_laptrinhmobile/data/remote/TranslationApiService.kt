@@ -18,7 +18,7 @@ interface TranslationApiService {
     suspend fun getMyMemoryTranslation(
         @Query("q") textToTranslate: String,
         @Query("langpair") langPair: String = "en|vi",
-        @Query("de") email: String? = null // Optional: địa chỉ email của bạn
+        @Query("de") email: String? = null
     ): Response<MyMemoryResponse>
 }
 

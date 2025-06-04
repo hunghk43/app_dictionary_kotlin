@@ -1,8 +1,6 @@
 package com.example.project_hk2_24_25_laptrinhmobile.data.model
 
 
-// Quan trọng: Đảm bảo EnglishWordDefinition đã được đổi tên và import đúng
-// import com.example.project_hk2_24_25_laptrinhmobile.data.model.EnglishWordDefinition
 
 data class RichWordDefinition(
     val englishDetails: WordDefinition, // Thông tin chi tiết từ dictionaryapi.dev

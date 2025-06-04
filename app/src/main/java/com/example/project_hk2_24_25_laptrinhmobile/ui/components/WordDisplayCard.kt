@@ -43,13 +43,13 @@ fun WordDisplayCard(
                 setDataSource(url)
                 prepareAsync()
                 setOnPreparedListener { start() }
-                // Optional: Add error listener for MediaPlayer
+
                 setOnErrorListener { _, _, _ ->
-                    // Handle error, e.g., show a toast or log
+
                     true
                 }
             } catch (e: Exception) {
-                // Handle exception
+
             }
         }
     }
@@ -60,7 +60,7 @@ fun WordDisplayCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Từ tiếng Anh và nút phát âm
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -78,15 +78,13 @@ fun WordDisplayCard(
                 }
             }
 
-            // Phiên âm tiếng Anh
-            englishDetails.getFirstPhonetic()?.let { phonetic -> // SỬA Ở ĐÂY: getFirstPhonetic()
+
+            englishDetails.getFirstPhonetic()?.let { phonetic ->
                 if (phonetic.isNotBlank()) {
-                    // Logic chuẩn hóa phonetic (thêm dấu /) nên nằm trong hàm getFirstPhonetic()
-                    // hoặc bạn phải tự làm ở đây.
-                    // Ví dụ, nếu getFirstPhonetic() chỉ trả về text thô:
+
                     val formattedPhonetic = if (phonetic.startsWith("/") && phonetic.endsWith("/")) phonetic else "/$phonetic/"
                     Text(
-                        text = formattedPhonetic, // Sử dụng phonetic đã chuẩn hóa
+                        text = formattedPhonetic,
                         style = MaterialTheme.typography.bodyMedium,
                         fontStyle = FontStyle.Italic,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

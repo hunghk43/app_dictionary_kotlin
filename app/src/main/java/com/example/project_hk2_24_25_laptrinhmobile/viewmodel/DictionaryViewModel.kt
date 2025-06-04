@@ -1,14 +1,13 @@
-// viewmodel/DictionaryViewModel.kt
+
 package com.example.project_hk2_24_25_laptrinhmobile.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition // Import model mới
+import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition
 import com.example.project_hk2_24_25_laptrinhmobile.data.remote.ApiResult
 import com.example.project_hk2_24_25_laptrinhmobile.data.repository.DictionaryRepository
-// Import extension function nếu nó nằm ở file khác (ví dụ, nếu searchWithValidation không còn dùng)
-// import com.example.project_hk2_24_25_laptrinhmobile.data.repository.searchWithValidation // Có thể không cần nữa
+
 import com.example.project_hk2_24_25_laptrinhmobile.utils.Constants
 import com.example.project_hk2_24_25_laptrinhmobile.utils.NetworkConnectivityObserver
 import com.example.project_hk2_24_25_laptrinhmobile.utils.NetworkStatus
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed class UiEvent { // Giữ nguyên UiEvent
+sealed class UiEvent {
     data class ShowSnackbar(val message: String, val actionLabel: String? = null) : UiEvent()
 }
 
@@ -34,17 +33,14 @@ class DictionaryViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    // StateFlow cho kết quả tìm kiếm, giờ là ApiResult<RichWordDefinition>
-    // Vì SearchScreen có thể hiển thị một danh sách (mặc dù API từ điển Anh-Anh thường trả về 1 item cho 1 từ),
-    // hoặc chỉ một kết quả chính. Hiện tại, hàm repository trả về 1 RichWordDefinition.
+
     private val _searchResult = MutableStateFlow<ApiResult<RichWordDefinition>?>(null)
     val searchResult: StateFlow<ApiResult<RichWordDefinition>?> = _searchResult.asStateFlow()
 
-    // StateFlow để lưu RichWordDefinition đang được chọn (ví dụ khi vào DefinitionScreen)
+
     private val _selectedRichWord = MutableStateFlow<RichWordDefinition?>(null)
     val selectedRichWord: StateFlow<RichWordDefinition?> = _selectedRichWord.asStateFlow()
 
-    // Các StateFlow khác giữ nguyên
     private val _searchHistory = MutableStateFlow<List<String>>(emptyList())
     val searchHistory: StateFlow<List<String>> = _searchHistory.asStateFlow()
 
@@ -69,7 +65,7 @@ class DictionaryViewModel @Inject constructor(
         observeNetworkChanges()
     }
 
-    private fun observeNetworkChanges() { // Logic giữ nguyên
+    private fun observeNetworkChanges() {
         viewModelScope.launch {
             networkStatus.collect { status ->
                 if (status != NetworkStatus.Available) {
@@ -81,7 +77,7 @@ class DictionaryViewModel @Inject constructor(
         }
     }
 
-    private fun loadSearchHistory() { // Logic giữ nguyên
+    private fun loadSearchHistory() {
         viewModelScope.launch {
             _searchHistory.value = repository.getSearchHistory()
             if (_searchQuery.value.isBlank()) {
@@ -90,12 +86,12 @@ class DictionaryViewModel @Inject constructor(
         }
     }
 
-    fun onSearchQueryChanged(query: String) { // Logic giữ nguyên
+    fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         suggestionJob?.cancel()
         if (query.isBlank()) {
             _searchResult.value = null
-            _selectedRichWord.value = null // Cập nhật
+            _selectedRichWord.value = null
             _searchSuggestions.value = _searchHistory.value.take(Constants.MAX_SUGGESTION_ITEMS_DISPLAYED)
             return
         }
@@ -150,8 +146,8 @@ class DictionaryViewModel @Inject constructor(
      * để xem chi tiết trong DefinitionScreen).
      */
     fun selectRichWordDefinition(richDefinition: RichWordDefinition?) {
-        _selectedRichWord.value = richDefinition // Dòng này phải được thực thi
-        Log.d("ViewModelDebug", "Selected rich word: ${richDefinition?.englishDetails?.word}") // Thêm log
+        _selectedRichWord.value = richDefinition
+        Log.d("ViewModelDebug", "Selected rich word: ${richDefinition?.englishDetails?.word}")
     }
 
     /**
@@ -160,15 +156,15 @@ class DictionaryViewModel @Inject constructor(
      * @param wordContext Từ gốc tiếng Anh (để xác định RichWordDefinition cần cập nhật).
      */
     fun translateDetailedText(originalText: String, wordContext: String) {
-        val currentRichDef = _selectedRichWord.value // Hoặc lấy từ _searchResult nếu UI đang hiển thị từ đó
+        val currentRichDef = _selectedRichWord.value
         if (currentRichDef == null || currentRichDef.englishDetails.word.lowercase() != wordContext.lowercase() || originalText.isBlank()) {
             viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar("Không thể dịch chi tiết lúc này.")) }
             return
         }
 
-        // Kiểm tra xem đã dịch chưa
+
         if (currentRichDef.detailedTranslations.containsKey(originalText)) {
-            return // Đã có bản dịch, không cần gọi API lại
+            return
         }
 
         if (networkStatus.value != NetworkStatus.Available) {
@@ -199,7 +195,7 @@ class DictionaryViewModel @Inject constructor(
         }
     }
 
-    fun clearSearch() { // Logic tương tự, cập nhật _selectedRichWord
+    fun clearSearch() { // cập nhật _selectedRichWord
         _searchQuery.value = ""
         _searchResult.value = null
         _selectedRichWord.value = null
@@ -208,7 +204,7 @@ class DictionaryViewModel @Inject constructor(
         suggestionJob?.cancel()
     }
 
-    fun clearSearchHistory() { // Logic giữ nguyên
+    fun clearSearchHistory() {
         viewModelScope.launch {
             repository.clearSearchHistory()
             loadSearchHistory()

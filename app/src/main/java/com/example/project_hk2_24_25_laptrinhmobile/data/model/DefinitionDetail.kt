@@ -13,5 +13,5 @@ data class DefinitionDetail(
 
     @SerializedName("antonyms")
     val antonyms: List<String>? = emptyList()
-    // Thêm các trường khác nếu API dictionaryapi.dev cung cấp cho mỗi "definition"
+
 )

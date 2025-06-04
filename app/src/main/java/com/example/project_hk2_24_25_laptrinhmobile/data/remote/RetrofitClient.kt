@@ -1,16 +1,14 @@
-// File: app/src/main/java/com/example/project_hk2_24_25_laptrinhmobile/data/remote/RetrofitClient.kt
+
 package com.example.project_hk2_24_25_laptrinhmobile.data.remote
 
-// Import BuildConfig từ package ứng dụng của bạn
 import com.example.project_hk2_24_25_laptrinhmobile.BuildConfig
 
-// Imports cho Gson và Retrofit/OkHttp
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.HttpException // Cho hàm getErrorMessage
-import retrofit2.Response     // Cho hàm safeApiCall (nếu bạn định nghĩa nó ở đây)
+import retrofit2.HttpException
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -44,8 +42,7 @@ object RetrofitClient {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            // Bạn có thể thêm các interceptors khác ở đây nếu cần
-            // ví dụ: .addInterceptor(AuthInterceptor()) cho việc thêm token tự động
+
             .build()
     }
 
@@ -55,8 +52,7 @@ object RetrofitClient {
      */
     private val gson: Gson by lazy {
         GsonBuilder()
-            // .setLenient() // Bỏ comment nếu API trả về JSON không quá chặt chẽ
-            // .serializeNulls() // Bỏ comment nếu muốn serialize các giá trị null
+
             .create()
     }
 
@@ -92,17 +88,13 @@ object RetrofitClient {
      * @return Chuỗi thông điệp lỗi.
      */
     fun getErrorMessage(throwable: Throwable): String {
-        // Log lỗi gốc để debug
-        // Log.e("RetrofitClientError", "Error: ${throwable.javaClass.simpleName} - ${throwable.message}", throwable)
+
 
         return when (throwable) {
             is java.net.UnknownHostException -> "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng của bạn."
             is java.net.SocketTimeoutException -> "Yêu cầu quá thời gian chờ. Vui lòng thử lại."
             is java.net.ConnectException -> "Kết nối thất bại. Vui lòng kiểm tra mạng và thử lại."
-            is HttpException -> { // Lỗi HTTP từ Retrofit (ví dụ: 404, 500)
-                // Bạn có thể thử đọc errorBody để lấy thông điệp lỗi cụ thể từ server nếu có
-                // val errorBody = throwable.response()?.errorBody()?.string()
-                // if (!errorBody.isNullOrBlank()) { return errorBody } // Cẩn thận, errorBody có thể là HTML hoặc JSON
+            is HttpException -> {
                 when (throwable.code()) {
                     400 -> "Yêu cầu không hợp lệ."
                     401 -> "Yêu cầu cần xác thực." // (Không áp dụng cho API hiện tại)
@@ -119,9 +111,6 @@ object RetrofitClient {
     }
 }
 
-// Các sealed class và extension function cho ApiResult và safeApiCall có thể đặt ở đây
-// hoặc trong một file tiện ích riêng (ví dụ: utils/ApiUtils.kt) để tránh làm file này quá dài.
-// Nếu bạn đã đặt chúng ở đây, chúng có thể trông như sau:
 
 /**
  * Sealed class để biểu diễn các trạng thái kết quả của một lời gọi API.
@@ -164,11 +153,11 @@ suspend fun <T : Any> safeApiCall(call: suspend () -> Response<T>): ApiResult<T>
                 ApiResult.Error("Nội dung phản hồi rỗng dù thành công (Mã: ${response.code()})")
             }
         } else {
-            // Lỗi HTTP (4xx, 5xx)
+            // Lỗi HTTP
             ApiResult.Error(RetrofitClient.getErrorMessage(HttpException(response)))
         }
     } catch (e: Exception) {
-        // Các lỗi khác (mạng, parse JSON, etc.)
+
         ApiResult.Error(RetrofitClient.getErrorMessage(e))
     }
 }

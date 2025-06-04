@@ -24,7 +24,7 @@ import com.example.project_hk2_24_25_laptrinhmobile.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(navController: NavController) {
-    // Gradient rực rỡ
+
     val gradientBrush = Brush.linearGradient(
         colors = listOf(
             Color(0xFFFF6F61), // Đỏ cam
@@ -66,15 +66,15 @@ fun AboutScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Logo hiển thị bên trên
+
                 Image(
                     painter = painterResource(id = R.drawable.logo_mobile),
                     contentDescription = "App Logo",
                     modifier = Modifier
-                        .fillMaxWidth() // Kéo dài ra hai bên
-                        .height(400.dp) // Tăng chiều cao để mở rộng lên trên
+                        .fillMaxWidth()
+                        .height(400.dp)
                         .padding(bottom = 16.dp),
-                    contentScale = ContentScale.Fit // Hiển thị toàn bộ ảnh
+                    contentScale = ContentScale.Fit
                 )
 
                 Text(

@@ -27,7 +27,7 @@ import com.example.project_hk2_24_25_laptrinhmobile.ui.components.SearchBar
 import com.example.project_hk2_24_25_laptrinhmobile.ui.components.WordDisplayCard
 import com.example.project_hk2_24_25_laptrinhmobile.viewmodel.DictionaryViewModel
 import kotlinx.coroutines.launch
-import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition // Import model mới
+import com.example.project_hk2_24_25_laptrinhmobile.data.model.RichWordDefinition
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,10 +36,9 @@ fun SearchScreen(
     viewModel: DictionaryViewModel = hiltViewModel()
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
-    // searchResult bây giờ là ApiResult<RichWordDefinition>?
+
     val searchResult by viewModel.searchResult.collectAsState()
     val searchHistory by viewModel.searchHistory.collectAsState()
-    // ... (snackbarHostState, coroutineScope, context, mediaPlayer - có thể bỏ mediaPlayer ở đây nếu WordDisplayCard tự quản lý)
 
     // Xử lý UI Event (ví dụ Snackbar)
     val snackbarHostState = remember { SnackbarHostState() }
@@ -61,7 +60,7 @@ fun SearchScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Từ điển Anh - Việt") }, // Cập nhật title
+                title = { Text("Từ điển Anh - Việt") },
                 actions = {
                     IconButton(onClick = { navController.navigate(route = Routes.ABOUT_SCREEN) }) {
                         Icon(Icons.Default.Info, contentDescription = "Giới thiệu")
@@ -96,24 +95,24 @@ fun SearchScreen(
                 }
                 is ApiResult.Success -> {
                     // API dictionaryapi.dev thường trả về list 1 phần tử cho 1 từ đơn
-                    // Hàm repository của chúng ta cũng trả về 1 RichWordDefinition
+                    // Hàm repository  cũng trả về 1 RichWordDefinition
                     val richWordDef = currentResult.data
-                    Column(modifier = Modifier.fillMaxSize()) { // Sử dụng Column thay vì LazyColumn nếu chỉ có 1 item
+                    Column(modifier = Modifier.fillMaxSize()) {
                         WordDisplayCard(
                             richWordDefinition = richWordDef,
                             onCardClick = {
-                                viewModel.selectRichWordDefinition(richWordDef) // Chọn từ này
+                                viewModel.selectRichWordDefinition(richWordDef)
                                 navController.navigate(route = Routes.definitionScreenWithWord(richWordDef.englishDetails.word))
                             }
                         )
-                        // Nếu repository trả về List<RichWordDefinition>, thì dùng LazyColumn ở đây
+
                     }
 
                 }
                 is ApiResult.Error -> {
                     ErrorView(
                         errorMessage = currentResult.message,
-                        onRetry = { viewModel.searchWord() }, // Gọi searchWord không tham số
+                        onRetry = { viewModel.searchWord() },
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -132,7 +131,7 @@ fun SearchScreen(
                                         text = historyItem,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clickable { // Đảm bảo clickable được import
+                                            .clickable {
                                                 viewModel.onSearchQueryChanged(historyItem)
                                                 viewModel.searchWord(historyItem)
                                             }

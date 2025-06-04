@@ -62,12 +62,12 @@ fun DefinitionScreen(
     LaunchedEffect(word, selectedRichWordState) {
         if (word != null && (selectedRichWordState == null || selectedRichWordState?.englishDetails?.word?.equals(word, ignoreCase = true) == false)) {
             // Gọi hàm searchWord để đảm bảo cả chi tiết Anh và dịch Việt chính được fetch
-            // Hoặc tạo một hàm riêng trong ViewModel để fetch chỉ cho DefinitionScreen nếu cần
+            // Hoặc tạo một hàm riêng trong ViewModel để fetch chỉ cho DefinitionScreen
             viewModel.searchWord(word)
         }
     }
 
-    val currentRichDef = selectedRichWordState // Hoặc lấy từ searchResult nếu logic của bạn là vậy
+    val currentRichDef = selectedRichWordState // Hoặc lấy từ searchResult nếu logic  là vậy
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -81,7 +81,7 @@ fun DefinitionScreen(
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Quay lại")
                     }
                 },
-                // Nút phát âm có thể đặt ở WordHeader
+
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -90,8 +90,7 @@ fun DefinitionScreen(
         }
     ) { paddingValues ->
         when {
-            // Nếu đang loading từ ViewModel (ví dụ: searchResult là Loading khi fetchWordDetails được gọi)
-            // Hoặc bạn có thể thêm một StateFlow<Boolean> isDetailsLoading trong ViewModel
+
             viewModel.searchResult.collectAsState().value is ApiResult.Loading && currentRichDef == null -> {
                 LoadingIndicator(Modifier.fillMaxSize().padding(paddingValues))
             }
@@ -104,7 +103,7 @@ fun DefinitionScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
-                        WordHeaderDetailed(richWordDefinition = currentRichDef) // Một component header mới/đã sửa
+                        WordHeaderDetailed(richWordDefinition = currentRichDef)
                     }
 
                     // Hiển thị các meaning tiếng Anh
@@ -114,7 +113,7 @@ fun DefinitionScreen(
                                 meaning = meaning,
                                 detailedTranslations = currentRichDef.detailedTranslations,
                                 onTranslateRequest = { textToTranslate ->
-                                    // Gọi ViewModel để dịch đoạn text này
+
                                     viewModel.translateDetailedText(
                                         originalText = textToTranslate,
                                         wordContext = currentRichDef.englishDetails.word
@@ -156,10 +155,9 @@ fun DefinitionScreen(
 
 @Composable
 private fun WordHeaderDetailed(richWordDefinition: RichWordDefinition) {
-    // Tương tự WordDisplayCard nhưng có thể chi tiết hơn hoặc chỉ tập trung vào thông tin chính
+
     val englishDetails = richWordDefinition.englishDetails
-    // ... (code tương tự WordDisplayCard để hiện từ, phiên âm, nút audio, và nghĩa TV chính)
-    // Ví dụ:
+
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -204,7 +202,7 @@ private fun WordHeaderDetailed(richWordDefinition: RichWordDefinition) {
             if (translation.isNotBlank()) {
                 Text(
                     text = "Tiếng Việt: $translation",
-                    style = MaterialTheme.typography.titleLarge, // To hơn ở màn hình chi tiết
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -227,7 +225,7 @@ private fun WordHeaderDetailed(richWordDefinition: RichWordDefinition) {
 
 @Composable
 private fun SourceUrlsSectionView(sourceUrls: List<String>) {
-    // Giữ nguyên hoặc cải tiến từ phiên bản trước
+
     Column(modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)) {
         Text(
             "Nguồn tham khảo (từ điển Anh-Anh):",
@@ -239,7 +237,7 @@ private fun SourceUrlsSectionView(sourceUrls: List<String>) {
             Text(
                 text = url,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.tertiary, // Có thể đổi màu
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.clickable {
                     // TODO: Mở URL trong trình duyệt
                 }
